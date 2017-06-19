@@ -4,7 +4,7 @@
 
 	class Url{
 
-		private $_url;
+		/*private $_url;
 		private $_segments;
 		private $_params;
 
@@ -14,37 +14,43 @@
 				$this->getSegmentsFromUrl();
 				$this->_params = $_GET;
 				unset($this->_params['url']);
-		}
-
-		protected  function getSegmentsFromUrl(){
+		}*/
+        //protected
+		protected static function getSegmentsFromUrl(){
 
 			$segments = explode('/', $_GET['url']);
 
 			if(empty ($segments[count($segments) - 1])){
 				unset($segments[count($segments) - 1]);
 			}
+			//array_map() - вызывает callback функцию, которая применяется к каждому элементу в указанном массиве
+			$segments = array_map(function($v){
+				//регулярка - заменит все символы на пустую строку
+				return preg_replace('/[\'\\\*]/','', $v);
+			}, $segments);
 
-			$this->_segments = $segments;
+			return $segments;
 		}
 
 		public static function getParam($paramName){
-
-			return $_GET[$paramName];
+			//addslashes() - экранирует спец символы
+			//urlencode() urldecode() - декодирует спецсимволы
+			return addcslashes($_GET[$paramName]);
 		}
 
 		public static function getSegment($n){
-
-			return $this->_segment[$n];
+			$segments = self::getSegmentsFromUrl();
+			return $segments[$n];
 		}
 
 		public static function getAllSegment(){
 
-			return $this->_segments;
+			return self::getSegmentsFromUrl();
 		}
 
-		public static function getUrlString(){
+		/*public static function getUrlString(){
 
 			return self::$_url; 
-		}
+		}*/
 
 	}
